@@ -1,0 +1,62 @@
+#include <graphics.h>
+#include <cmath>
+#include <iostream>
+using namespace std;
+
+// Function to draw Koch curve recursively
+void kochCurve(int x1, int y1, int x2, int y2, int depth) {
+    if (depth == 0) {
+        // Draw line segment when recursion depth is 0
+        line(x1, y1, x2, y2);
+    } else {
+        // Calculate the points dividing the line into 3 parts
+        int x3 = (2 * x1 + x2) / 3;
+        int y3 = (2 * y1 + y2) / 3;
+
+        int x4 = (x1 + 2 * x2) / 3;
+        int y4 = (y1 + 2 * y2) / 3;
+
+        // Calculate the peak of the equilateral triangle
+        int dx = x4 - x3;
+        int dy = y4 - y3;
+        int x5 = (x3 + x4) / 2 - dy;
+        int y5 = (y3 + y4) / 2 + dx;
+
+        // Recursively draw 4 smaller Koch curves
+        kochCurve(x1, y1, x3, y3, depth - 1);
+        kochCurve(x3, y3, x5, y5, depth - 1);
+        kochCurve(x5, y5, x4, y4, depth - 1);
+        kochCurve(x4, y4, x2, y2, depth - 1);
+    }
+}
+
+// Function to draw the Koch snowflake
+void drawSnowflake(int x, int y, int size, int depth) {
+    // Calculate the height of an equilateral triangle
+    int height = (int)(sqrt(3) * size / 2);
+
+    // Define the 3 vertices of the equilateral triangle
+    int x1 = x, y1 = y - height;
+    int x2 = x - size / 2, y2 = y + height / 2;
+    int x3 = x + size / 2, y3 = y + height / 2;
+
+    // Draw 3 Koch curves for the 3 sides of the triangle
+    kochCurve(x1, y1, x2, y2, depth);
+    kochCurve(x2, y2, x3, y3, depth);
+    kochCurve(x3, y3, x1, y1, depth);
+}
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, "");  // Initialize graphics mode
+    int x = 320, y = 240;     // Center of the snowflake
+    int size = 200;           // Side length of the triangle
+    int depth = 4;            // Depth of recursion
+
+    // Draw the snowflake
+    drawSnowflake(x, y, size, depth);
+
+    getch();  // Wait for key press before closing
+    closegraph();  // Close the graphics window
+    return 0;
+}

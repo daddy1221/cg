@@ -1,0 +1,72 @@
+#include <graphics.h>
+#include <conio.h>
+#include <stdlib.h>
+#include <dos.h>
+#include <iostream>
+
+using namespace std;
+
+class WalkingMan {
+    int rhx, rhy;  
+
+public:
+    void draw(int i);                   // Function to draw walking man with umbrella (for walking)
+    void drawRain(int x, int y);        // Function to draw rain
+};
+
+void WalkingMan::draw(int i) {
+    // Drawing the platform
+    line(20, 380, 580, 380); // platform
+
+    // Drawing the walking man with umbrella (alternate positions for legs and hands)
+    if (i % 2 == 0) {
+        line(25 + i, 380, 35 + i, 340);  // left leg
+        line(45 + i, 380, 35 + i, 340);  // right leg
+        line(35 + i, 310, 25 + i, 330);  // left hand
+        delay(20);
+    } else {
+        line(35 + i, 380, 35 + i, 340);  // legs
+        line(35 + i, 310, 40 + i, 330);  // right hand
+        delay(20);
+    }
+
+    line(35 + i, 340, 35 + i, 310);  // body
+    circle(35 + i, 300, 10);          // head
+    line(35 + i, 310, 50 + i, 330);   // left hand
+    line(50 + i, 330, 50 + i, 280);   // umbrella stick
+    line(15 + i, 280, 85 + i, 280);   // umbrella right
+    arc(50 + i, 280, 0, 180, 35);     // umbrella body
+    arc(55 + i, 330, 180, 360, 5);    // umbrella handle
+}
+
+void WalkingMan::drawRain(int x, int y) {
+    // Draw raindrops
+    for (int j = 0; j < 100; j++) {
+        outtextxy(rand() % x, rand() % (y - 50), "|");
+        setcolor(WHITE);
+    }
+}
+
+int main() {
+    int gd = DETECT, gm;
+    int rhx, rhy, i;
+
+    // Initialize graphics mode
+    initgraph(&gd, &gm, "");
+
+    WalkingMan obj;
+
+    // Loop to simulate walking
+    for (i = 0; i < 500; i += 5) {
+        obj.draw(i);  // Draw the walking man with umbrella
+        rhx = getmaxx();  // Get the max x coordinate (screen width)
+        rhy = getmaxy();  // Get the max y coordinate (screen height)
+        obj.drawRain(rhx, rhy);  // Draw raindrops on the screen
+        delay(150);  // Delay for smoother animation
+        cleardevice();  // Clear the screen for the next frame
+    }
+
+    getch();  // Wait for a key press before closing
+    closegraph();  // Close graphics mode
+    return 0;
+}
